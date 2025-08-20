@@ -5,9 +5,15 @@ import {
   ListToolsRequestSchema,
   type CallToolRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL } from "./tools/tools.js";
+import {
+  GET_BALANCE_TOOL,
+  GET_LATEST_BLOCK_TOOL,
+  SEND_FUNDS_TOOL,
+} from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
+import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
+import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -39,9 +45,24 @@ async function main() {
             return balance;
           }
 
+          case "send_funds": {
+            const { receiverAddress, amountToSend } = args as {
+              receiverAddress: string;
+              amountToSend: string;
+            };
+
+            const validatedInput = sendFundsInputSchema.parse({
+              receiverAddress,
+              amountToSend,
+            });
+
+            const result = await sendFunds(validatedInput);
+            return result;
+          }
+
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, send_funds`
             );
           }
         }
@@ -62,7 +83,7 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL],
+      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL, SEND_FUNDS_TOOL],
     };
   });
 
