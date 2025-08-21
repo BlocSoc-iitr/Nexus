@@ -5,9 +5,11 @@ import {
   ListToolsRequestSchema,
   type CallToolRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL } from "./tools/tools.js";
+import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL, DEPLOY_CONTRACTS_TOOL } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
+import { deployContracts } from "./tools/hyper-evm/DeployContracts/index.js";
+import type { DeployContractsInput } from "./tools/hyper-evm/DeployContracts/schemas.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -39,9 +41,15 @@ async function main() {
             return balance;
           }
 
+          case "deploy_contracts": {
+            const input = args as DeployContractsInput;
+            const result = await deployContracts(input);
+            return result;
+          }
+
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts`
             );
           }
         }
@@ -62,7 +70,7 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL],
+      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL, DEPLOY_CONTRACTS_TOOL],
     };
   });
 
