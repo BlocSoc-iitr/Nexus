@@ -1,5 +1,5 @@
 import { walletClient } from "../../../config.js";
-import { isAddress, parseEther } from "viem";
+import { isAddress, parseEther, parseGwei } from "viem";
 import type { GetFundsInput } from "./schemas.js";
 
 export async function sendFunds(transactionDetails: GetFundsInput) {
@@ -22,6 +22,8 @@ export async function sendFunds(transactionDetails: GetFundsInput) {
       to: address as `0x${string}`,
       value: amountWei,
       chain: walletClient.chain,
+      maxFeePerGas: parseGwei("20"),
+      maxPriorityFeePerGas: parseGwei("2"),
     });
 
     return {

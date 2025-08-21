@@ -12,28 +12,29 @@ import { privateKeySchema } from "./tools/hyper-evm/sendFunds/schemas.js";
 dotenv.config();
 
 const hyperEvmConfig = defineChain({
-  id: 11155111,
-  name: "Sepolia",
+  id: parseInt(process.env.CHAIN_ID || "998", 10),
+  name: "HyperEVM",
   nativeCurrency: {
     decimals: 18,
-    name: "Sepolia Ether",
-    symbol: "SEP",
+    name: "HYPE",
+    symbol: "HYPE",
   },
   rpcUrls: {
     default: {
       http: [
-        process.env.CHAIN_RPC_URL ||
-          "https://sepolia.infura.io/v3/df64b46e42bf44cdac355be0ff027e2c",
+        process.env.CHAIN_RPC_URL || "https://hyperliquid-testnet.drpc.org",
       ],
     },
   },
   blockExplorers: {
     default: {
-      name: "Sepolia Etherscan",
-      url: "https://sepolia.etherscan.io",
+      name: "HyperEVM Explorer",
+      url:
+        process.env.BLOCK_EXPLORER_URL ||
+        "https://hyperevm-explorer.vercel.app/",
     },
   },
-  testnet: true,
+  testnet: process.env.IS_TESTNET === "true",
 });
 
 export const publicClient = createPublicClient({
