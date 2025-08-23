@@ -3,9 +3,16 @@ import { account, walletClient } from '../../../client.js';
 import { publicClient } from '../../../config.js';
 
 export async function deployContracts(input: DeployContractsInput) {
-    const { abi, bytecode, constructorArguments } = input;
+    let { abi, bytecode, constructorArguments } = input;
+
+    const cleanedAbi = JSON.stringify(abi)
+        .replace(/\\"/g, '"')  // Replace \" with "
+        .replace(/\\n/g, '\n') // Replace \\n with newline
+        .replace(/\\t/g, '\t') // Replace \\t with tab
+        .replace(/\\s/g, ' '); // Replace \\s with space
+
     const hash = await walletClient.deployContract({
-        abi: abi as any,
+        abi: cleanedAbi as any,
         bytecode: bytecode as `0x${string}`,
         args: constructorArguments,
         account: account,

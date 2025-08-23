@@ -6,7 +6,7 @@ export async function getBalance(userAddress: GetBalanceInput) {
   try {
     let address = userAddress.userAddress;
     if (!isAddress(address)) {
-      throw new Error(`Invalid Sepolia address: ${address}`);
+      throw new Error(`Invalid HyperEVM address: ${address}`);
     }
 
     const balanceWei = await publicClient.getBalance({
@@ -19,7 +19,7 @@ export async function getBalance(userAddress: GetBalanceInput) {
       content: [
         {
           type: "text",
-          text: `Balance for address ${address}:\n• ETH: ${balanceHype.toFixed(6)}\n• Wei: ${balanceWei.toString()}`,
+          text: `Balance for address ${address}:\n• HYPE: ${balanceHype.toFixed(6)}\n• Wei: ${balanceWei.toString()}`,
         },
       ],
     };
