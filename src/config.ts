@@ -29,9 +29,7 @@ const hyperEvmConfig = defineChain({
   blockExplorers: {
     default: {
       name: "HyperEVM Explorer",
-      url:
-        process.env.BLOCK_EXPLORER_URL ||
-        "https://testnet.purrsec.com/",
+      url: process.env.BLOCK_EXPLORER_URL || "https://testnet.purrsec.com/",
     },
   },
   testnet: process.env.IS_TESTNET === "true",

@@ -6,9 +6,9 @@ export async function sendFunds(transactionDetails: GetFundsInput) {
   try {
     const address = transactionDetails.receiverAddress;
     const amountWei = parseEther(transactionDetails.amountToSend);
-    const maxFeePerGasAmount = parseGwei(transactionDetails.maxFeePerGas);
-    const maxPriorityFeePerGasAmount = parseGwei(
-      transactionDetails.maxPriorityFeePerGas
+    const maxFeePerGas = parseGwei(transactionDetails.maxFeePerGas || "20");
+    const maxPriorityFeePerGas = parseGwei(
+      transactionDetails.maxPriorityFeePerGas || "2"
     );
 
     if (!isAddress(address)) {
@@ -26,8 +26,8 @@ export async function sendFunds(transactionDetails: GetFundsInput) {
       to: address as `0x${string}`,
       value: amountWei,
       chain: walletClient.chain,
-      maxFeePerGas: maxFeePerGasAmount,
-      maxPriorityFeePerGas: maxPriorityFeePerGasAmount,
+      maxFeePerGas: maxFeePerGas,
+      maxPriorityFeePerGas: maxPriorityFeePerGas,
     });
 
     return {

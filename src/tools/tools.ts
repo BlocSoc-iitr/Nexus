@@ -28,11 +28,6 @@ export const SEND_FUNDS_TOOL: Tool = {
   inputSchema: {
     type: "object",
     properties: sendFundsInputSchema.shape,
-    required: [
-      "receiverAddress",
-      "amountToSend",
-      "maxFeePerGas",
-      "maxPriorityFeePerGas",
-    ],
+    required: ["receiverAddress", "amountToSend"],
   },
 };

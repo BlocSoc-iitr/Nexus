@@ -32,16 +32,18 @@ export const sendFundsInputSchema = z.object({
     .regex(/^\d+(\.\d+)?$/, {
       message: "Max fee must be a positive number (as a string)",
     })
+    .optional()
     .describe(
-      "The maximum amount of fee per gas to send, as a string representing a positive number (e.g., '20')."
+      "The maximum amount of fee per gas to send, as a string representing a positive number (e.g., '20'). Defaults to '20' if not specified."
     ),
   maxPriorityFeePerGas: z
     .string()
     .regex(/^\d+(\.\d+)?$/, {
       message: "Max priority fee must be a positive number (as a string)",
     })
+    .optional()
     .describe(
-      "The maximum amount of priority fee per gas to send, as a string representing a positive number (e.g., '2')."
+      "The maximum amount of priority fee per gas to send, as a string representing a positive number (e.g., '0.1'). Defaults to '2' if not specified."
     ),
 });
 
