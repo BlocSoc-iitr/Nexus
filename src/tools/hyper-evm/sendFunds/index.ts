@@ -6,6 +6,10 @@ export async function sendFunds(transactionDetails: GetFundsInput) {
   try {
     const address = transactionDetails.receiverAddress;
     const amountWei = parseEther(transactionDetails.amountToSend);
+    const maxFeePerGasAmount = parseGwei(transactionDetails.maxFeePerGas);
+    const maxPriorityFeePerGasAmount = parseGwei(
+      transactionDetails.maxPriorityFeePerGas
+    );
 
     if (!isAddress(address)) {
       throw new Error(`Invalid HyperEVM address: ${address}`);
@@ -22,8 +26,8 @@ export async function sendFunds(transactionDetails: GetFundsInput) {
       to: address as `0x${string}`,
       value: amountWei,
       chain: walletClient.chain,
-      maxFeePerGas: parseGwei("20"),
-      maxPriorityFeePerGas: parseGwei("2"),
+      maxFeePerGas: maxFeePerGasAmount,
+      maxPriorityFeePerGas: maxPriorityFeePerGasAmount,
     });
 
     return {

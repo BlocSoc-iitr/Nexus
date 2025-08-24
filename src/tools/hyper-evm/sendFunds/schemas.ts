@@ -27,6 +27,22 @@ export const sendFundsInputSchema = z.object({
     .describe(
       "The amount of funds to send, as a string representing a positive number (e.g., '0.1')."
     ),
+  maxFeePerGas: z
+    .string()
+    .regex(/^\d+(\.\d+)?$/, {
+      message: "Max fee must be a positive number (as a string)",
+    })
+    .describe(
+      "The maximum amount of fee per gas to send, as a string representing a positive number (e.g., '20')."
+    ),
+  maxPriorityFeePerGas: z
+    .string()
+    .regex(/^\d+(\.\d+)?$/, {
+      message: "Max priority fee must be a positive number (as a string)",
+    })
+    .describe(
+      "The maximum amount of priority fee per gas to send, as a string representing a positive number (e.g., '2')."
+    ),
 });
 
 export type PrivateKey = z.infer<typeof privateKeySchema>;
