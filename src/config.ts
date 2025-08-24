@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const hyperEvmConfig = defineChain({
-  id: parseInt(process.env.CHAIN_ID || "998", 10),
+  id: parseInt("998", 10),
   name: "HyperEVM",
   nativeCurrency: {
     decimals: 18,
@@ -13,16 +13,16 @@ const hyperEvmConfig = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [process.env.CHAIN_RPC_URL || ""],
+      http: ["https://hyperliquid-testnet.drpc.org"],
     },
   },
   blockExplorers: {
     default: {
       name: "HyperEVM Explorer",
-      url: process.env.BLOCK_EXPLORER_URL || "",
+      url: "https://testnet.purrsec.com/",
     },
   },
-  testnet: process.env.IS_TESTNET === "true",
+  testnet: true,
 });
 
 export const publicClient = createPublicClient({
