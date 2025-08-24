@@ -30,12 +30,6 @@ export const publicClient = createPublicClient({
   transport: http(),
 });
 
-//HyperEVM
-//998
-//https://hyperliquid-testnet.drpc.org
-//https://testnet.purrsec.com/
+export const hyperEvmTestnet = hyperEvmConfig;
 
-//Sepolia
-//11155111
-//https://sepolia.infura.io/v3/df64b46e42bf44cdac355be0ff027e2c
-//https://sepolia.etherscan.io
+

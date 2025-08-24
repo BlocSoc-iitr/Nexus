@@ -1,9 +1,9 @@
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { hyperevmTestnet } from "./chains/hyperevm.js";
+import { hyperEvmTestnet } from "./config.js";
 
 export const walletClient = createWalletClient({
-  chain: hyperevmTestnet,
+  chain: hyperEvmTestnet,
   transport: http(process.env.CHAIN_RPC_URL),
 });
 
