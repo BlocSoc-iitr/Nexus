@@ -5,7 +5,11 @@ import {
   ListToolsRequestSchema,
   type CallToolRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL, DEPLOY_CONTRACTS_TOOL } from "./tools/tools.js";
+import {
+  GET_BALANCE_TOOL,
+  GET_LATEST_BLOCK_TOOL,
+  DEPLOY_CONTRACTS_TOOL,
+} from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
 import { deployContracts } from "./tools/hyper-evm/DeployContracts/index.js";

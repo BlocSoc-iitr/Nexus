@@ -13,17 +13,13 @@ const hyperEvmConfig = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [
-        process.env.CHAIN_RPC_URL || "",
-      ],
+      http: [process.env.CHAIN_RPC_URL || ""],
     },
   },
   blockExplorers: {
     default: {
       name: "HyperEVM Explorer",
-      url:
-        process.env.BLOCK_EXPLORER_URL ||
-        "",
+      url: process.env.BLOCK_EXPLORER_URL || "",
     },
   },
   testnet: process.env.IS_TESTNET === "true",
