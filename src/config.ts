@@ -21,7 +21,9 @@ export const hyperEvmConfig = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [process.env.CHAIN_RPC_URL || "https://hyperliquid-testnet.drpc.org"],
+      http: [
+        process.env.CHAIN_RPC_URL || "https://hyperliquid-testnet.drpc.org",
+      ],
     },
   },
   blockExplorers: {

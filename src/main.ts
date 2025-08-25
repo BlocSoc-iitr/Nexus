@@ -9,7 +9,7 @@ import {
   GET_BALANCE_TOOL,
   GET_LATEST_BLOCK_TOOL,
   DEPLOY_CONTRACTS_TOOL,
-  SEND_FUNDS_TOOL
+  SEND_FUNDS_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
@@ -17,7 +17,6 @@ import { deployContracts } from "./tools/hyper-evm/DeployContracts/index.js";
 import type { DeployContractsInput } from "./tools/hyper-evm/DeployContracts/schemas.js";
 import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
 import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
-
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -93,7 +92,12 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL, DEPLOY_CONTRACTS_TOOL, SEND_FUNDS_TOOL],
+      tools: [
+        GET_LATEST_BLOCK_TOOL,
+        GET_BALANCE_TOOL,
+        DEPLOY_CONTRACTS_TOOL,
+        SEND_FUNDS_TOOL,
+      ],
     };
   });
 
