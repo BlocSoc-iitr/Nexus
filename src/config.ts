@@ -31,5 +31,3 @@ export const publicClient = createPublicClient({
 });
 
 export const hyperEvmTestnet = hyperEvmConfig;
-
-
