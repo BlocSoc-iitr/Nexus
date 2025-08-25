@@ -33,7 +33,13 @@ export async function getTokenBalance(contractDetails: GetTokenBalanceInput) {
       functionName: "symbol",
     });
 
-    const tokenBalance = Number(balanceData) / 1e18;
+    const decimalData = await publicClient.readContract({
+      address: contractAddress,
+      abi: erc20Abi,
+      functionName: "decimals",
+    });
+
+    const tokenBalance = Number(balanceData) / decimalData;
 
     return {
       content: [
