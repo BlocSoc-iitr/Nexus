@@ -8,9 +8,9 @@ export async function deployContracts(input: DeployContractsInput) {
 
   const hash = await walletClient.deployContract({
     abi: abi as any,
-    bytecode: bytecode as `0x${string}`,
-    args: constructorArguments,
     account: account,
+    args: constructorArguments,
+    bytecode: bytecode as `0x${string}`,
   });
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
