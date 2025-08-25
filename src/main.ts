@@ -9,11 +9,14 @@ import {
   GET_BALANCE_TOOL,
   GET_LATEST_BLOCK_TOOL,
   SEND_FUNDS_TOOL,
+  GET_TOKEN_BALANCE_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
 import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
 import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
+import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
+import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -46,23 +49,47 @@ async function main() {
           }
 
           case "send_funds": {
-            const { receiverAddress, amountToSend } = args as {
+            const {
+              receiverAddress,
+              amountToSend,
+              maxFeePerGas,
+              maxPriorityFeePerGas,
+            } = args as {
               receiverAddress: string;
               amountToSend: string;
+              maxFeePerGas?: string;
+              maxPriorityFeePerGas?: string;
             };
 
             const validatedInput = sendFundsInputSchema.parse({
               receiverAddress,
               amountToSend,
+              maxFeePerGas,
+              maxPriorityFeePerGas,
             });
 
             const result = await sendFunds(validatedInput);
             return result;
           }
 
+          case "get_token_balance": {
+            const { contractAddress, userAddress } = args as {
+              contractAddress: string;
+              userAddress: string;
+            };
+
+            const validatedInput = getTokenBalanceInputSchema.parse({
+              contractAddress,
+              userAddress,
+            });
+
+            const result = await getTokenBalance(validatedInput);
+            return result;
+          }
+
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, send_funds`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, send_funds, get_token_balance`
             );
           }
         }
@@ -83,7 +110,12 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL, SEND_FUNDS_TOOL],
+      tools: [
+        GET_LATEST_BLOCK_TOOL,
+        GET_BALANCE_TOOL,
+        SEND_FUNDS_TOOL,
+        GET_TOKEN_BALANCE_TOOL,
+      ],
     };
   });
 

@@ -1,6 +1,7 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getBalanceInputSchema } from "./hyper-evm/getBalance/schemas.js";
 import { sendFundsInputSchema } from "./hyper-evm/sendFunds/schemas.js";
+import { getTokenBalanceInputSchema } from "./hyper-evm/getTokenBalance/schemas.js";
 
 export const GET_BALANCE_TOOL: Tool = {
   name: "get_balance",
@@ -29,5 +30,15 @@ export const SEND_FUNDS_TOOL: Tool = {
     type: "object",
     properties: sendFundsInputSchema.shape,
     required: ["receiverAddress", "amountToSend"],
+  },
+};
+
+export const GET_TOKEN_BALANCE_TOOL: Tool = {
+  name: "get_token_balance",
+  description: "Get the balance of an ERC20 token of a user address",
+  inputSchema: {
+    type: "object",
+    properties: getTokenBalanceInputSchema.shape,
+    required: ["contractAddress", "userAddress"],
   },
 };
