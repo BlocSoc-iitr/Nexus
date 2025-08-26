@@ -1,7 +1,8 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getBalanceInputSchema } from "./hyper-evm/getBalance/schemas.js";
-import { deployContractsSchema } from "./hyper-evm/DeployContracts/schemas.js";
+import { deployContractsSchema } from "./hyper-evm/deployContracts/schemas.js";
 import { sendFundsInputSchema } from "./hyper-evm/sendFunds/schemas.js";
+import { getTransactionReceiptInputSchema } from "./hyper-evm/getTransactionReceipt/schemas.js";
 
 export const GET_BALANCE_TOOL: Tool = {
   name: "get_balance",
@@ -40,5 +41,15 @@ export const SEND_FUNDS_TOOL: Tool = {
     type: "object",
     properties: sendFundsInputSchema.shape,
     required: ["receiverAddress", "amountToSend"],
+  },
+};
+
+export const GET_TRANSACTION_RECEIPT_TOOL: Tool = {
+  name: "get_transaction_receipt",
+  description: "Get the receipt of a transaction",
+  inputSchema: {
+    type: "object",
+    properties: getTransactionReceiptInputSchema.shape,
+    required: ["txHash"],
   },
 };
