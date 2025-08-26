@@ -1,10 +1,10 @@
-import { createPublicClient, http, defineChain } from "viem";
+import { createPublicClient,createWalletClient, http, defineChain } from "viem";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const hyperEvmConfig = defineChain({
-  id: parseInt(process.env.CHAIN_ID || "998", 10),
+export const hyperEvmConfig = defineChain({
+  id: parseInt(process.env.CHAIN_ID || "11155111", 10),
   name: "HyperEVM",
   nativeCurrency: {
     decimals: 18,
@@ -14,7 +14,7 @@ const hyperEvmConfig = defineChain({
   rpcUrls: {
     default: {
       http: [
-        process.env.CHAIN_RPC_URL || "https://hyperliquid-testnet.drpc.org",
+        process.env.CHAIN_RPC_URL || "https://sepolia.infura.io/v3/df64b46e42bf44cdac355be0ff027e2c",
       ],
     },
   },
@@ -23,7 +23,7 @@ const hyperEvmConfig = defineChain({
       name: "HyperEVM Explorer",
       url:
         process.env.BLOCK_EXPLORER_URL ||
-        "https://hyperevm-explorer.vercel.app/",
+        "https://sepolia.etherscan.io",
     },
   },
   testnet: process.env.IS_TESTNET === "true",
@@ -33,3 +33,5 @@ export const publicClient = createPublicClient({
   chain: hyperEvmConfig,
   transport: http(),
 });
+
+

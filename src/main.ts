@@ -5,12 +5,15 @@ import {
   ListToolsRequestSchema,
   type CallToolRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL } from "./tools/tools.js";
+import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL,CALL_CONTRACT_FUNCTION } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
+import { callContracts } from "./tools/hyper-evm/callContracts/index.js";
+import { CallContractSchema } from "./tools/hyper-evm/callContracts/schema.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
+  
   const server = new Server(
     {
       name: "hyperliquid",
@@ -38,12 +41,48 @@ async function main() {
             const balance = await getBalance({ userAddress });
             return balance;
           }
+          
+            case "call_contract_function": {
+              try {
+               const validatedInput = CallContractSchema.parse(args);
+               const result = await callContracts(validatedInput);
 
-          default: {
+             return {
+              content: [
+            {
+           type: "text",
+            text: JSON.stringify(
+            result,
+             (_, v) => (typeof v === "bigint" ? v.toString() : v),
+            2
+          ),
+        },
+      ],
+    };
+  } catch (validationError) {
+    console.error("Validation error:", validationError);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Error: ${
+            validationError instanceof Error
+              ? validationError.message
+              : String(validationError)
+          }`,
+        },
+      ],
+    };
+  }
+}
+
+          default:
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, call_contract_function`
             );
-          }
+      
+
+       
         }
       } catch (error) {
         console.error("Error handling request:", error);
@@ -62,7 +101,7 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL],
+      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL,CALL_CONTRACT_FUNCTION],
     };
   });
 
