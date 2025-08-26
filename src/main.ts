@@ -43,17 +43,32 @@ async function main() {
           }
           
             case "call_contract_function": {
-              try {
-               const validatedInput = CallContractSchema.parse(args);
-               const result = await callContracts(validatedInput);
+  try {
+    const { contractAddress, functionName, abi, functionArgs, privateKey } = args as {
+      contractAddress: string;
+      functionName: string;
+      abi: any;
+      functionArgs?: any[];
+      privateKey?: string;
+    };
 
-             return {
-              content: [
-            {
-           type: "text",
-            text: JSON.stringify(
+    const validatedInput = CallContractSchema.parse({
+      contractAddress,
+      functionName,
+      abi,
+      functionArgs,
+      privateKey,
+    });
+
+    const result = await callContracts(validatedInput);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
             result,
-             (_, v) => (typeof v === "bigint" ? v.toString() : v),
+            (_, v) => (typeof v === "bigint" ? v.toString() : v),
             2
           ),
         },
@@ -75,6 +90,7 @@ async function main() {
     };
   }
 }
+
 
           default:
             throw new Error(

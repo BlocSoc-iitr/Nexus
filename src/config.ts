@@ -14,7 +14,7 @@ export const hyperEvmConfig = defineChain({
   rpcUrls: {
     default: {
       http: [
-        process.env.CHAIN_RPC_URL || "https://sepolia.infura.io/v3/df64b46e42bf44cdac355be0ff027e2c",
+        process.env.CHAIN_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
       ],
     },
   },
