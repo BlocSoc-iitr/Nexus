@@ -8,11 +8,14 @@ import {
 import {
   GET_BALANCE_TOOL,
   GET_LATEST_BLOCK_TOOL,
+  DEPLOY_CONTRACTS_TOOL,
   SEND_FUNDS_TOOL,
   GET_TOKEN_BALANCE_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
+import { deployContracts } from "./tools/hyper-evm/DeployContracts/index.js";
+import type { DeployContractsInput } from "./tools/hyper-evm/DeployContracts/schemas.js";
 import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
 import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
 import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
@@ -46,6 +49,12 @@ async function main() {
               .userAddress;
             const balance = await getBalance({ userAddress });
             return balance;
+          }
+
+          case "deploy_contracts": {
+            const input = args as DeployContractsInput;
+            const result = await deployContracts(input);
+            return result;
           }
 
           case "send_funds": {
@@ -89,7 +98,7 @@ async function main() {
 
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, send_funds, get_token_balance`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_token_balance`
             );
           }
         }
@@ -115,6 +124,8 @@ async function main() {
         GET_BALANCE_TOOL,
         SEND_FUNDS_TOOL,
         GET_TOKEN_BALANCE_TOOL,
+        DEPLOY_CONTRACTS_TOOL,
+
       ],
     };
   });

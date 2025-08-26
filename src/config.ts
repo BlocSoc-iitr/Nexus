@@ -11,12 +11,12 @@ import { privateKeySchema } from "./tools/hyper-evm/sendFunds/schemas.js";
 
 dotenv.config();
 
-const hyperEvmConfig = defineChain({
+export const hyperEvmConfig = defineChain({
   id: parseInt(process.env.CHAIN_ID || "998", 10),
   name: "HyperEVM",
   nativeCurrency: {
     decimals: 18,
-    name: "HYPE",
+    name: "HyperEVM",
     symbol: "HYPE",
   },
   rpcUrls: {
@@ -32,7 +32,7 @@ const hyperEvmConfig = defineChain({
       url: process.env.BLOCK_EXPLORER_URL || "https://testnet.purrsec.com/",
     },
   },
-  testnet: process.env.IS_TESTNET === "true",
+  testnet: true,
 });
 
 export const publicClient = createPublicClient({
@@ -45,7 +45,7 @@ if (!process.env.PRIVATE_KEY) {
 }
 
 const parsedPrivateKey = privateKeySchema.parse(process.env.PRIVATE_KEY);
-const account = privateKeyToAccount(parsedPrivateKey as `0x${string}`);
+export const account = privateKeyToAccount(parsedPrivateKey as `0x${string}`);
 
 export const walletClient: WalletClient = createWalletClient({
   account: account,

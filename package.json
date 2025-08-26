@@ -22,7 +22,10 @@
   "description": "",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
+    "abitype": "^1.0.9",
     "dotenv": "^17.2.1",
+    "ether": "^0.0.9",
+    "ethers": "^6.15.0",
     "viem": "^2.33.3",
     "zod": "^3.25.76"
   },
