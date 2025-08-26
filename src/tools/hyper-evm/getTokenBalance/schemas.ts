@@ -1,23 +1,19 @@
 import { z } from "zod";
 import { isAddress } from "viem";
 
+const addressSchema = z
+  .string()
+  .refine(addr => isAddress(addr), {
+    message: "Must be a valid Ethereum address (0x format)",
+  });
+
 export const getTokenBalanceInputSchema = z.object({
-  contractAddress: z
-    .string()
-    .refine(address => isAddress(address), {
-      message: "Must be a valid HyperEVM address (0x format)",
-    })
-    .describe(
-      "The contract address of the ERC20 token to get the balance for (must be a valid HyperEVM address starting with 0x)."
-    ),
-  userAddress: z
-    .string()
-    .refine(address => isAddress(address), {
-      message: "Must be a valid HyperEVM address (0x format)",
-    })
-    .describe(
-      "The wallet address of the user to get the balance for (must be a valid HyperEVM address starting with 0x)."
-    ),
+  contractAddress: addressSchema.describe(
+    "The contract address of the ERC20 token (must start with 0x)."
+  ),
+  userAddress: addressSchema.describe(
+    "The wallet address of the user (must start with 0x)."
+  ),
 });
 
 export type GetTokenBalanceInput = z.infer<typeof getTokenBalanceInputSchema>;
