@@ -39,6 +39,10 @@ export async function getTransactionReceipt(input: getTransactionReceiptInput) {
         },
         {
           type: "text",
+          text: `BlockHash: ${receipt.blockHash}`,
+        },
+        {
+          type: "text",
           text: `From: ${receipt.from}`,
         },
         {
