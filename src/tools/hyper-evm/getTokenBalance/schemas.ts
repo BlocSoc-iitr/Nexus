@@ -1,11 +1,9 @@
 import { z } from "zod";
 import { isAddress } from "viem";
 
-const addressSchema = z
-  .string()
-  .refine(addr => isAddress(addr), {
-    message: "Must be a valid Ethereum address (0x format)",
-  });
+const addressSchema = z.string().refine(addr => isAddress(addr), {
+  message: "Must be a valid Ethereum address (0x format)",
+});
 
 export const getTokenBalanceInputSchema = z.object({
   contractAddress: addressSchema.describe(

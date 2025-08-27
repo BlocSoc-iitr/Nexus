@@ -1,6 +1,6 @@
 import { publicClient } from "../../../config.js";
 import type { GetTokenBalanceInput } from "./schemas.js";
-import { erc20Abi, isAddress } from "viem";
+import { erc20Abi, isAddress, formatUnits } from "viem";
 
 export async function getTokenBalance(contractDetails: GetTokenBalanceInput) {
   try {
@@ -14,12 +14,12 @@ export async function getTokenBalance(contractDetails: GetTokenBalanceInput) {
       throw new Error(`Invalid HyperEVM address: ${userAddress}`);
     }
 
-    const balanceData = await publicClient.readContract({
+    const balanceData = (await publicClient.readContract({
       address: contractAddress,
       abi: erc20Abi,
       functionName: "balanceOf",
       args: [userAddress],
-    });
+    })) as bigint;
 
     const nameData = await publicClient.readContract({
       address: contractAddress,
@@ -33,13 +33,13 @@ export async function getTokenBalance(contractDetails: GetTokenBalanceInput) {
       functionName: "symbol",
     });
 
-    const decimalData = await publicClient.readContract({
+    const decimalData = (await publicClient.readContract({
       address: contractAddress,
       abi: erc20Abi,
       functionName: "decimals",
-    });
+    })) as number;
 
-    const tokenBalance = Number(balanceData) / decimalData;
+    const tokenBalance = formatUnits(balanceData, decimalData);
 
     return {
       content: [

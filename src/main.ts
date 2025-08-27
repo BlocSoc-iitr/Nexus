@@ -10,14 +10,17 @@ import {
   GET_LATEST_BLOCK_TOOL,
   DEPLOY_CONTRACTS_TOOL,
   SEND_FUNDS_TOOL,
+  GET_TRANSACTION_RECEIPT_TOOL,
   GET_TOKEN_BALANCE_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
-import { deployContracts } from "./tools/hyper-evm/DeployContracts/index.js";
-import type { DeployContractsInput } from "./tools/hyper-evm/DeployContracts/schemas.js";
+import { deployContracts } from "./tools/hyper-evm/deployContracts/index.js";
+import type { DeployContractsInput } from "./tools/hyper-evm/deployContracts/schemas.js";
 import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
 import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
+import { getTransactionReceipt } from "./tools/hyper-evm/getTransactionReceipt/index.js";
+import type { getTransactionReceiptInput } from "./tools/hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
 import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
 
@@ -81,6 +84,12 @@ async function main() {
             return result;
           }
 
+          case "get_transaction_receipt": {
+            const input = args as getTransactionReceiptInput;
+            const result = await getTransactionReceipt(input);
+            return result;
+          }
+
           case "get_token_balance": {
             const { contractAddress, userAddress } = args as {
               contractAddress: string;
@@ -126,6 +135,7 @@ async function main() {
         GET_TOKEN_BALANCE_TOOL,
         DEPLOY_CONTRACTS_TOOL,
 
+        GET_TRANSACTION_RECEIPT_TOOL,
       ],
     };
   });
