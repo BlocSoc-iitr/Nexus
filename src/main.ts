@@ -125,7 +125,7 @@ async function main() {
         DEPLOY_CONTRACTS_TOOL,
         SEND_FUNDS_TOOL,
         GET_TRANSACTION_RECEIPT_TOOL,
-        GET_TOKEN_BALANCE_TOOL
+        GET_TOKEN_BALANCE_TOOL,
       ],
     };
   });
