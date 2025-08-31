@@ -67,6 +67,7 @@ npm install
 ```
 
 ### Configuration
+
 Copy the environment file:
 
 ```
