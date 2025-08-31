@@ -4,6 +4,7 @@ import { deployContractsSchema } from "./hyper-evm/deployContracts/schemas.js";
 import { sendFundsInputSchema } from "./hyper-evm/sendFunds/schemas.js";
 import { getTransactionReceiptInputSchema } from "./hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./hyper-evm/getTokenBalance/schemas.js";
+import { getStakingInputSchema } from "./hyper-evm/handleStake/schemas.js";
 
 export const GET_BALANCE_TOOL: Tool = {
   name: "get_balance",
@@ -62,5 +63,25 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
     type: "object",
     properties: getTokenBalanceInputSchema.shape,
     required: ["contractAddress", "userAddress"],
+  },
+};
+
+export const STAKE_TOOL: Tool = {
+  name: "stake",
+  description: "Stake HYPE tokens on Hyperliquid",
+  inputSchema: {
+    type: "object",
+    properties: getStakingInputSchema.shape,
+    required: ["amountToSend", "isTestnet"],
+  },
+};
+
+export const UNSTAKE_TOOL: Tool = {
+  name: "unstake",
+  description: "Unstake HYPE tokens from Hyperliquid",
+  inputSchema: {
+    type: "object",
+    properties: getStakingInputSchema.shape,
+    required: ["amountToSend", "isTestnet"],
   },
 };
