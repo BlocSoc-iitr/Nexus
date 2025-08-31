@@ -67,17 +67,6 @@ npm install
 ```
 
 ### Configuration
-
-Create a `.env` file in the project root with:
-
-```bash
-CHAIN_ID=998,
-CHAIN_RPC_URL=https://hyperliquid-testnet.drpc.org,
-BLOCK_EXPLORER_URL=https://testnet.purrsec.com/,
-IS_TESTNET=true,
-PRIVATE_KEY=0x...
-```
-
 Copy the environment file:
 
 ```
