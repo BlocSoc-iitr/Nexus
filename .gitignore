@@ -74,3 +74,6 @@ Thumbs.db
 # Temporary folders
 tmp/
 temp/
+
+#environment file
+.env
