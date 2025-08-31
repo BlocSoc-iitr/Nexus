@@ -1,15 +1,3 @@
-feat/Add.env.example
-
-# TODO
-
-Copy the environment file:
-
-```
-cp .env.example .env
-```
-
-# <<<<<<< HEAD
-
 ## Introduction
 
 Nexus is a Model Context Protocol (MCP) server that makes a set of blockchain tools available for the Hyperliquid EVM chain through a standard tool interface. It lets AI agents and clients that work with MCP safely query the state of the chain and do things on-chain through validated tool calls.
@@ -90,6 +78,12 @@ IS_TESTNET=true,
 PRIVATE_KEY=0x...
 ```
 
+Copy the environment file:
+
+```
+cp .env.example .env
+```
+
 The server uses `src/config.ts` to define the chain and to create a `viem` wallet client from these values.
 
 ### Build and run
@@ -152,6 +146,3 @@ src/
 ## Contributing
 
 We openly welcome contributions to Nexus from the broader web3 community. For details, refer -[CONTRIBUTION GUIDELINES](CONTRIBUTING.md).
-dev
-
-> > > > > > > 7e16dfffc070bbdce6fd4473b629888097fc041b
