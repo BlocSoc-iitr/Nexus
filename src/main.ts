@@ -29,7 +29,10 @@ import {
   performStaking,
   performUnstaking,
 } from "./tools/hyper-evm/handleStake/index.js";
-import { getStakingInputSchema } from "./tools/hyper-evm/handleStake/schemas.js";
+import {
+  getStakingInputSchema,
+  getUnstakingInputSchema,
+} from "./tools/hyper-evm/handleStake/schemas.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -41,6 +44,11 @@ async function main() {
     { capabilities: { tools: {} } }
   );
 
+  performStaking({
+    amountToStake: "1",
+    validatorAddress: "0xa012b9040d83c5cbad9e6ea73c525027b755f596",
+    isTestnet: false,
+  });
   server.setRequestHandler(
     CallToolRequestSchema,
     async (request: CallToolRequest) => {
@@ -105,7 +113,8 @@ async function main() {
 
           case "stake": {
             const input = args as {
-              amountToSend: string;
+              amountToStake: string;
+              validatorAddress: string;
               isTestnet: boolean | string;
             };
 
@@ -116,11 +125,11 @@ async function main() {
 
           case "unstake": {
             const input = args as {
-              amountToSend: string;
+              amountToUnstake: string;
               isTestnet: boolean | string;
             };
 
-            const validatedInput = getStakingInputSchema.parse(input);
+            const validatedInput = getUnstakingInputSchema.parse(input);
             const result = await performUnstaking(validatedInput);
             return result;
           }
