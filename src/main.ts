@@ -98,9 +98,13 @@ async function main() {
             return result;
           }
 
-          case "get_logs":{
-            const {from,to}=args as {userAddress:string,from?:number,to?:number};
-            const logs=await getLogs({from,to});
+          case "get_logs": {
+            const { from, to } = args as {
+              userAddress: string;
+              from?: number;
+              to?: number;
+            };
+            const logs = await getLogs({ from, to });
             return logs;
           }
 

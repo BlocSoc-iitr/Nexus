@@ -66,12 +66,12 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
   },
 };
 
-export const GET_LOGS_TOOL: Tool={
-  name:"get_logs",
-  description:"Get the logs of WETH contract",
-  inputSchema:{
-    type:"object",
-    properties:getLogsInputSchema.shape,
-    requires:[],
+export const GET_LOGS_TOOL: Tool = {
+  name: "get_logs",
+  description: "Get the logs of WETH contract",
+  inputSchema: {
+    type: "object",
+    properties: getLogsInputSchema.shape,
+    requires: [],
   },
-}
+};

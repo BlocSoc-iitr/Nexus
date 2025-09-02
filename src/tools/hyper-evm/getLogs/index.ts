@@ -2,9 +2,11 @@ import type { GetLogsInput } from "./schemas.js";
 import { publicClient } from "../../../config.js";
 
 function safeStringify(obj: any) {
-  return JSON.stringify(obj, (_, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  , 2);
+  return JSON.stringify(
+    obj,
+    (_, value) => (typeof value === "bigint" ? value.toString() : value),
+    2
+  );
 }
 
 export async function getLogs(params: GetLogsInput) {
