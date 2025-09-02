@@ -1,5 +1,6 @@
 import type { GetLogsInput } from "./schemas.js";
 import { publicClient } from "../../../config.js";
+import { isAddress } from "viem";
 
 function safeStringify(obj: any) {
   return JSON.stringify(
@@ -11,12 +12,16 @@ function safeStringify(obj: any) {
 
 export async function getLogs(params: GetLogsInput) {
   try {
-    const from = params.from ? BigInt(params.from) : 31083400n;
-    const to = params.to ? BigInt(params.to) : 31084400n;
-    const wethAddress = "0xADcb2f358Eae6492F61A5F87eb8893d09391d160";
+    const from = params.from ? BigInt(params.from) : 0n;
+    const to = params.to ? BigInt(params.to) : 1000n;
+    const address = params.contractAddress;
+
+    if (!isAddress(address)) {
+      throw new Error(`Invalid HyperEVM address: ${address}`);
+    }
 
     const response = await publicClient.getLogs({
-      address: wethAddress,
+      address,
       fromBlock: from,
       toBlock: to,
     });
@@ -25,7 +30,7 @@ export async function getLogs(params: GetLogsInput) {
       content: [
         {
           type: "text",
-          text: `WETH Logs:\n• ${safeStringify(response)}`,
+          text: `Given ERC20 token Logs:\n• ${safeStringify(response)}`,
         },
       ],
     };

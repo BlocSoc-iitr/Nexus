@@ -99,12 +99,12 @@ async function main() {
           }
 
           case "get_logs": {
-            const { from, to } = args as {
-              userAddress: string;
+            const { contractAddress, from, to } = args as {
+              contractAddress: string;
               from?: number;
               to?: number;
             };
-            const logs = await getLogs({ from, to });
+            const logs = await getLogs({ contractAddress, from, to });
             return logs;
           }
 

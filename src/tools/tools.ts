@@ -68,7 +68,8 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
 
 export const GET_LOGS_TOOL: Tool = {
   name: "get_logs",
-  description: "Get the logs of WETH contract",
+  description:
+    "Get the logs of any ERC20 token(present on hyperliquid) between two blocks",
   inputSchema: {
     type: "object",
     properties: getLogsInputSchema.shape,

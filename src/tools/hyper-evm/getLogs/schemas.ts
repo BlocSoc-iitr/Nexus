@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 export const getLogsInputSchema = z.object({
+  contractAddress: z
+    .string()
+    .describe("The address of the ERC20 token contract"),
   from: z
     .number()
     .optional()
