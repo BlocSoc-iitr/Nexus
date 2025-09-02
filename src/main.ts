@@ -12,6 +12,7 @@ import {
   SEND_FUNDS_TOOL,
   GET_TRANSACTION_RECEIPT_TOOL,
   GET_TOKEN_BALANCE_TOOL,
+  GET_LOGS_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
@@ -23,6 +24,7 @@ import { getTransactionReceipt } from "./tools/hyper-evm/getTransactionReceipt/i
 import type { getTransactionReceiptInput } from "./tools/hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
 import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
+import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -96,6 +98,12 @@ async function main() {
             return result;
           }
 
+          case "get_logs":{
+            const {from,to}=args as {userAddress:string,from?:number,to?:number};
+            const logs=await getLogs({from,to});
+            return logs;
+          }
+
           default: {
             throw new Error(
               `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance`
@@ -126,6 +134,7 @@ async function main() {
         SEND_FUNDS_TOOL,
         GET_TRANSACTION_RECEIPT_TOOL,
         GET_TOKEN_BALANCE_TOOL,
+        GET_LOGS_TOOL,
       ],
     };
   });
