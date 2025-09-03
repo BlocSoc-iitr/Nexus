@@ -1,83 +1,56 @@
 import { walletClient, exchClient, infoClient } from "../../../config.js";
 import type { getStakingInput, getUnstakingInput } from "./schemas.js";
-import { parseEther } from "viem";
 
 export async function performStaking(stakingDetails: getStakingInput) {
-  console.error(
-    "Starting performStaking function with details:",
-    stakingDetails
-  );
-
   try {
-    console.error("Fetching validator summaries...");
     const validators = await infoClient.validatorSummaries();
-    console.error("Found validators:", validators.length);
 
     const validator = validators.find(
       v => v.validator === stakingDetails.validatorAddress
     );
 
     if (!validator) {
-      console.error(`Validator not found: ${stakingDetails.validatorAddress}`);
       throw new Error(`Validator ${stakingDetails.validatorAddress} not found`);
     }
 
-    console.error("Found validator:", validator.name);
+    const amountScaled = Number(
+      (parseFloat(stakingDetails.amountToStake) * 1e8).toFixed(0)
+    );
 
-    console.error("Parsing amount to Wei...");
-    const amountWei = parseEther(stakingDetails.amountToStake);
-    console.error("Amount in Wei:", amountWei.toString());
-
-    console.error("Initiating deposit...");
     const depositResult = await exchClient.cDeposit({
-      wei: Number(amountWei),
+      wei: amountScaled,
     });
-    console.error("Deposit result:", depositResult);
 
     if (depositResult.status !== "ok") {
-      console.error("Deposit failed with status:", depositResult.status);
       throw new Error(`Deposit failed: ${JSON.stringify(depositResult)}`);
     }
 
-    console.error("Deposit successful, waiting 3 seconds for processing...");
     // Wait for deposit to process
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    console.error("Initiating delegation...");
     const delegationResult = await exchClient.tokenDelegate({
       validator: stakingDetails.validatorAddress,
-      wei: Number(stakingDetails.amountToStake),
+      wei: amountScaled,
       isUndelegate: false,
     });
-    console.error("Delegation result:", delegationResult);
 
     if (delegationResult.status !== "ok") {
-      console.error("Delegation failed with status:", delegationResult.status);
       throw new Error(`Delegation failed: ${JSON.stringify(delegationResult)}`);
     }
 
-    console.error("Getting wallet client account...");
     const userAddress = walletClient.account?.address;
     if (!userAddress) {
-      console.error(
-        "Failed to load wallet client account - account is undefined"
-      );
       throw new Error("Failed to load wallet client account");
     }
-    console.error("User address:", userAddress);
 
-    console.error("Fetching updated delegations...");
     const updatedDelegations = await infoClient.delegations({
       user: userAddress,
     });
-    console.error("Updated delegations:", updatedDelegations);
 
     const newDelegation = updatedDelegations.find(
       d => d.validator === stakingDetails.validatorAddress
     );
-    console.error("New delegation found:", newDelegation);
 
-    console.error("Staking completed successfully");
     return {
       content: [
         {
@@ -88,11 +61,6 @@ export async function performStaking(stakingDetails: getStakingInput) {
     };
   } catch (error) {
     console.error("Error performing staking:", error);
-    console.error(
-      "Error stack trace:",
-      error instanceof Error ? error.stack : "No stack trace available"
-    );
-    console.error("Staking details that caused error:", stakingDetails);
     throw new Error(
       `Failed to perform staking: ${error instanceof Error ? error.message : String(error)}`
     );
@@ -114,7 +82,8 @@ export async function performUnstaking(unstakingDetails: getUnstakingInput) {
     }
 
     const totalDelegated = currentDelegations.reduce(
-      (sum, delegation) => sum + parseFloat(delegation.amount),
+      (sum, delegation) =>
+        sum + Number(parseFloat(delegation.amount).toFixed(8)),
       0
     );
 
@@ -139,21 +108,18 @@ export async function performUnstaking(unstakingDetails: getUnstakingInput) {
         remainingToUnstake,
         delegatedAmount
       );
-      const newDelegationAmount = (
-        delegatedAmount - amountToUndelegateFromThis
-      ).toString();
+      const newUndelegatedAmountScaled = Number(
+        (amountToUndelegateFromThis * 1e8).toFixed(0)
+      );
 
       const undelegateResult = await exchClient.tokenDelegate({
         validator: delegation.validator,
-        wei: Number(newDelegationAmount),
+        wei: newUndelegatedAmountScaled,
         isUndelegate: true,
       });
 
       if (undelegateResult.status !== "ok") {
-        console.warn(
-          `Failed to undelegate from ${delegation.validator}:`,
-          undelegateResult
-        );
+        throw new Error(`Failed to undelegate from ${delegation.validator}:`);
       } else {
         undelegationResults.push({
           validator: delegation.validator,
@@ -176,10 +142,12 @@ export async function performUnstaking(unstakingDetails: getUnstakingInput) {
     // Wait for undelegations to process
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    const amountWei = parseEther(unstakingDetails.amountToUnstake).toString();
+    const amountScaledWithdraw = Number(
+      (parseFloat(unstakingDetails.amountToUnstake) * 1e8).toFixed(0)
+    );
 
     const withdrawResult = await exchClient.cWithdraw({
-      wei: Number(amountWei),
+      wei: amountScaledWithdraw,
     });
 
     if (withdrawResult.status !== "ok") {

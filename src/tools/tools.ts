@@ -85,6 +85,6 @@ export const UNSTAKE_TOOL: Tool = {
   inputSchema: {
     type: "object",
     properties: getUnstakingInputSchema.shape,
-    required: ["amountToUnstake", "isTestnet"],
+    required: ["amountToUnstake", "validatorAddress", "isTestnet"],
   },
 };
