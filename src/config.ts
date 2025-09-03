@@ -63,6 +63,7 @@ export const exchClient = new hyper.ExchangeClient({
   wallet: walletClient,
   transport: transport,
   isTestnet: true,
+  signatureChainId: process.env.isTestnet ? "0x66eee" : "0x1",
 });
 
 export const infoClient = new hyper.InfoClient({ transport });

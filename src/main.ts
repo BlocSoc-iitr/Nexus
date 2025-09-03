@@ -44,11 +44,6 @@ async function main() {
     { capabilities: { tools: {} } }
   );
 
-  performStaking({
-    amountToStake: "1",
-    validatorAddress: "0xa012b9040d83c5cbad9e6ea73c525027b755f596",
-    isTestnet: false,
-  });
   server.setRequestHandler(
     CallToolRequestSchema,
     async (request: CallToolRequest) => {
@@ -126,6 +121,7 @@ async function main() {
           case "unstake": {
             const input = args as {
               amountToUnstake: string;
+              validatorAddress: string;
               isTestnet: boolean | string;
             };
 

@@ -65,6 +65,14 @@ export const getUnstakingInputSchema = z.object({
     .describe(
       "Set to true if unstaking on testnet, false for mainnet. Accepts boolean or string 'true'/'false'."
     ),
+  validatorAddress: z
+    .string()
+    .refine(address => isAddress(address), {
+      message: "Must be a valid Ethereum address (0x format)",
+    })
+    .describe(
+      "The address of the validator to stake to (must be a valid Ethereum address starting with 0x)."
+    ),
 });
 
 export type getStakingInput = z.infer<typeof getStakingInputSchema>;
