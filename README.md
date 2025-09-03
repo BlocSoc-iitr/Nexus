@@ -104,7 +104,7 @@ Example tool calls (names only; argument shapes are defined by the server):
 - deploy_contracts { abi, bytecode, constructorArguments }
 - get_transaction_receipt { txHash }
 - stake { amountToStake, validatorAddress, isTestnet }
-- unstake { amountToUnstake, isTestnet }
+- unstake { amountToUnstake, validatorAddress, isTestnet }
 
 Inspect `src/main.ts` and `src/tools/**` for exact schemas and behaviors.
 
