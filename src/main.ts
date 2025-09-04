@@ -130,6 +130,8 @@ async function main() {
             const validatedInput = getUnstakingInputSchema.parse(input);
             const result = await performUnstaking(validatedInput);
             return result;
+          }
+
           case "get_logs": {
             const { contractAddress, from, to } = args as {
               contractAddress: string;

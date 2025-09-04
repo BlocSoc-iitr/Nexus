@@ -87,6 +87,8 @@ export const UNSTAKE_TOOL: Tool = {
     type: "object",
     properties: getUnstakingInputSchema.shape,
     required: ["amountToUnstake", "validatorAddress", "isTestnet"],
+  },
+};
 
 export const GET_LOGS_TOOL: Tool = {
   name: "get_logs",
