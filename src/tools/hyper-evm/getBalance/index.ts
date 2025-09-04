@@ -4,7 +4,7 @@ import { isAddress } from "viem";
 
 export async function getBalance(userAddress: GetBalanceInput) {
   try {
-    let address = userAddress.userAddress;
+    const address = userAddress.userAddress;
     if (!isAddress(address)) {
       throw new Error(`Invalid HyperEVM address: ${address}`);
     }

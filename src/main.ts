@@ -5,11 +5,30 @@ import {
   ListToolsRequestSchema,
   type CallToolRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { GET_BALANCE_TOOL, GET_LATEST_BLOCK_TOOL,CALL_CONTRACT_FUNCTION } from "./tools/tools.js";
+
+import {
+  GET_BALANCE_TOOL,
+  GET_LATEST_BLOCK_TOOL,
+  DEPLOY_CONTRACTS_TOOL,
+  SEND_FUNDS_TOOL,
+  GET_TRANSACTION_RECEIPT_TOOL,
+  GET_TOKEN_BALANCE_TOOL,
+  GET_LOGS_TOOL,CALL_CONTRACT_FUNCTION,
+} from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
+import { deployContracts } from "./tools/hyper-evm/deployContracts/index.js";
+import type { DeployContractsInput } from "./tools/hyper-evm/deployContracts/schemas.js";
 import { callContracts } from "./tools/hyper-evm/callContracts/index.js";
 import { CallContractSchema } from "./tools/hyper-evm/callContracts/schema.js";
+import { sendFunds } from "./tools/hyper-evm/sendFunds/index.js";
+import { sendFundsInputSchema } from "./tools/hyper-evm/sendFunds/schemas.js";
+import { getTransactionReceipt } from "./tools/hyper-evm/getTransactionReceipt/index.js";
+import type { getTransactionReceiptInput } from "./tools/hyper-evm/getTransactionReceipt/schemas.js";
+import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
+import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
+import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
+
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -43,63 +62,112 @@ async function main() {
           }
           
             case "call_contract_function": {
-  try {
-    const { contractAddress, functionName, abi, functionArgs, privateKey } = args as {
-      contractAddress: string;
-      functionName: string;
-      abi: any;
-      functionArgs?: any[];
-      privateKey?: string;
-    };
-
-    const validatedInput = CallContractSchema.parse({
-      contractAddress,
-      functionName,
-      abi,
-      functionArgs,
-      privateKey,
-    });
-
-    const result = await callContracts(validatedInput);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(
-            result,
-            (_, v) => (typeof v === "bigint" ? v.toString() : v),
-            2
-          ),
-        },
-      ],
-    };
-  } catch (validationError) {
-    console.error("Validation error:", validationError);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Error: ${
-            validationError instanceof Error
-              ? validationError.message
-              : String(validationError)
-          }`,
-        },
-      ],
-    };
-  }
-}
+              try {
+                const { contractAddress, functionName, abi, functionArgs, } = args as {
+                 contractAddress: string;
+                 functionName: string;
+                 abi: any;
+                 functionArgs?: any[];
+                 };
 
 
-          default:
+                 const validatedInput = CallContractSchema.parse({
+                  contractAddress,
+                  functionName,
+                  abi,
+                  functionArgs,
+                 });
+
+                const result = await callContracts(validatedInput);
+
+             return {
+               content: [
+                 {
+                type: "text",
+                text: JSON.stringify(
+                 result,
+                (_, v) => (typeof v === "bigint" ? v.toString() : v),
+                2
+                  ),
+                 },
+               ],
+               };
+               } catch (validationError) {
+                console.error("Validation error:", validationError);
+               return {
+               content: [
+               {
+                type: "text",
+                text: `Error: ${
+                validationError instanceof Error
+               ? validationError.message
+                : String(validationError)
+               }`,
+              },
+              ],
+             };
+            }
+            }
+
+
+          case "deploy_contracts": {
+            const input = args as DeployContractsInput;
+            const result = await deployContracts(input);
+            return result;
+          }
+
+          case "send_funds": {
+            const { receiverAddress, amountToSend } = args as {
+              receiverAddress: string;
+              amountToSend: string;
+            };
+
+            const validatedInput = sendFundsInputSchema.parse({
+              receiverAddress,
+              amountToSend,
+            });
+
+            const result = await sendFunds(validatedInput);
+            return result;
+          }
+
+          case "get_transaction_receipt": {
+            const input = args as getTransactionReceiptInput;
+            const result = await getTransactionReceipt(input);
+            return result;
+          }
+
+          case "get_token_balance": {
+            const { contractAddress, userAddress } = args as {
+              contractAddress: string;
+              userAddress: string;
+            };
+
+            const validatedInput = getTokenBalanceInputSchema.parse({
+              contractAddress,
+              userAddress,
+            });
+
+            const result = await getTokenBalance(validatedInput);
+            return result;
+          }
+
+          case "get_logs": {
+            const { contractAddress, from, to } = args as {
+              contractAddress: string;
+              from?: number;
+              to?: number;
+            };
+            const logs = await getLogs({ contractAddress, from, to });
+            return logs;
+          }
+
+          default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, call_contract_function`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance,call_contract_function,get_logs`
             );
-      
-
-       
         }
+      }
       } catch (error) {
         console.error("Error handling request:", error);
         return {
@@ -113,11 +181,22 @@ async function main() {
       }
     }
   );
+  
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: [GET_LATEST_BLOCK_TOOL, GET_BALANCE_TOOL,CALL_CONTRACT_FUNCTION],
+
+      tools: [
+        GET_LATEST_BLOCK_TOOL,
+        GET_BALANCE_TOOL,
+        DEPLOY_CONTRACTS_TOOL,
+        SEND_FUNDS_TOOL,
+        GET_TRANSACTION_RECEIPT_TOOL,
+        GET_TOKEN_BALANCE_TOOL,
+        GET_LOGS_TOOL,CALL_CONTRACT_FUNCTION
+      ],
+
     };
   });
 

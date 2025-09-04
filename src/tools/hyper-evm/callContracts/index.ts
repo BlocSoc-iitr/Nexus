@@ -2,7 +2,8 @@ import { encodeFunctionData, type Abi, type AbiFunction, isAddress } from "viem"
 import { createWalletClient, http } from "viem";
 import { publicClient ,walletClient } from "../../../config.js"
 import { hyperEvmConfig } from "../../../config.js";
-import type { GetContractDetails,privateKeySchema  } from "./schema.js"
+import type { GetContractDetails  } from "./schema.js"
+import { privateKeySchema } from "../sendFunds/schemas.js";
 import { privateKeyToAccount } from "viem/accounts"
 
 export async function callContracts(contractDetails: GetContractDetails) {

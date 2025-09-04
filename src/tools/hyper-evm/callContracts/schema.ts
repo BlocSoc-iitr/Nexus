@@ -22,14 +22,5 @@ export const CallContractSchema = z.object({
 
 });
 
-export const privateKeySchema = z
-  .string()
-  .regex(/^0x[a-fA-F0-9]{64}$/, {
-    message: "Must be a valid private key (0x + 64 hex chars)",
-  })
-  .describe(
-    "Private key in 0x-prefixed hex format, 64 characters long (32 bytes)."
-  );
 
 export type GetContractDetails = z.infer<typeof CallContractSchema>;
-export type PrivateKey = z.infer<typeof privateKeySchema>;
