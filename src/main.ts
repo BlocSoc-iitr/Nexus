@@ -14,6 +14,7 @@ import {
   GET_TOKEN_BALANCE_TOOL,
   STAKE_TOOL,
   UNSTAKE_TOOL,
+  GET_LOGS_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
@@ -33,6 +34,7 @@ import {
   getStakingInputSchema,
   getUnstakingInputSchema,
 } from "./tools/hyper-evm/handleStake/schemas.js";
+import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -128,6 +130,14 @@ async function main() {
             const validatedInput = getUnstakingInputSchema.parse(input);
             const result = await performUnstaking(validatedInput);
             return result;
+          case "get_logs": {
+            const { contractAddress, from, to } = args as {
+              contractAddress: string;
+              from?: number;
+              to?: number;
+            };
+            const logs = await getLogs({ contractAddress, from, to });
+            return logs;
           }
 
           default: {
@@ -162,6 +172,7 @@ async function main() {
         GET_TOKEN_BALANCE_TOOL,
         STAKE_TOOL,
         UNSTAKE_TOOL,
+        GET_LOGS_TOOL,
       ],
     };
   });
