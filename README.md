@@ -27,7 +27,6 @@ MCP servers offer a schema-driven interface that removes the need for custom int
 - High-performance EVM environment with fast finality and low fees
 - Familiar EVM tooling (ABIs, RPC, wallets) via `viem`
 - Built-in staking capabilities for HYPE tokens
-- Built-in staking capabilities for HYPE tokens
 
 ## Architecture
 
@@ -45,8 +44,6 @@ The server currently exposes the following tools (see `src/tools/tools.ts`):
 - send_funds: Send native funds from the configured signer to a receiver
 - deploy_contracts: Deploy a contract with ABI, bytecode, constructor args
 - get_transaction_receipt: Fetch a transaction receipt by hash
-- stake: Stake HYPE tokens on Hyperliquid
-- unstake: Unstake HYPE tokens from Hyperliquid
 - stake: Stake HYPE tokens on Hyperliquid
 - unstake: Unstake HYPE tokens from Hyperliquid
 
