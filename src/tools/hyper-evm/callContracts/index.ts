@@ -1,8 +1,8 @@
 import { encodeFunctionData, type Abi, type AbiFunction, isAddress } from "viem"
 import { createWalletClient, http } from "viem";
-import { publicClient } from "../../../config.js"
+import { publicClient ,walletClient } from "../../../config.js"
 import { hyperEvmConfig } from "../../../config.js";
-import type { GetContractDetails } from "./schema.js"
+import type { GetContractDetails,privateKeySchema  } from "./schema.js"
 import { privateKeyToAccount } from "viem/accounts"
 
 export async function callContracts(contractDetails: GetContractDetails) {
@@ -57,18 +57,6 @@ export async function callContracts(contractDetails: GetContractDetails) {
 
       return await publicClient.readContract(callParams);
     }
-
-    if (!contractDetails.privateKey) {
-      throw Error("Private key required for non view/pure functions");
-    }
-    
-    const account = privateKeyToAccount(contractDetails.privateKey as `0x${string}`);
-
-    const walletClient = createWalletClient({
-      account,
-      chain: hyperEvmConfig,
-      transport: http(),
-    });
 
     const callParams: any = {
       address: contractDetails.contractAddress,

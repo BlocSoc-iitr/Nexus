@@ -9,11 +9,27 @@ export const CallContractSchema = z.object({
     }),
   functionName: z.string().min(1, "Function name cannot be empty"),
   abi: z.union([z.string(), z.array(z.any())]), 
-  functionArgs: z.array(z.any()).optional(),
-  privateKey: z
-    .string()
-    .regex(/^0x[a-fA-F0-9]{64}$/, "Private key must be 0x + 64 hex chars")
-    .optional(),
+  functionArgs: z.preprocess((val) => {
+  if (typeof val === "string") {
+    try {
+      return JSON.parse(val);
+    } catch {
+      return [val]; 
+    }
+  }
+  return val;
+}, z.array(z.any()).optional()),
+
 });
 
+export const privateKeySchema = z
+  .string()
+  .regex(/^0x[a-fA-F0-9]{64}$/, {
+    message: "Must be a valid private key (0x + 64 hex chars)",
+  })
+  .describe(
+    "Private key in 0x-prefixed hex format, 64 characters long (32 bytes)."
+  );
+
 export type GetContractDetails = z.infer<typeof CallContractSchema>;
+export type PrivateKey = z.infer<typeof privateKeySchema>;
