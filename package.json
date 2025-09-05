@@ -22,17 +22,17 @@
   "description": "",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
-
+    "@nktkas/hyperliquid": "^0.22.1",
     "abitype": "^1.0.9",
     "dotenv": "^17.2.1",
     "ether": "^0.0.9",
     "ethers": "^6.15.0",
+    "hyperliquid": "^1.7.6",
     "viem": "^2.33.3",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
-
     "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
