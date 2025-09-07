@@ -4,7 +4,9 @@ import { isAddress } from "viem";
 export const fetchTransactionsInputSchema = z.object({
   userAddress: z
     .string()
-    .refine(addr => isAddress(addr), { message: "Must be a valid HyperEVM address (0x...)" })
+    .refine(addr => isAddress(addr), {
+      message: "Must be a valid HyperEVM address (0x...)",
+    })
     .describe("The user address to search transactions for."),
   lookbackBlocks: z
     .number()
@@ -12,7 +14,9 @@ export const fetchTransactionsInputSchema = z.object({
     .positive()
     .max(5_000)
     .optional()
-    .describe("How many recent blocks to scan backwards from the latest block. Defaults to 500."),
+    .describe(
+      "How many recent blocks to scan backwards from the latest block. Defaults to 500."
+    ),
   limit: z
     .number()
     .int()
@@ -22,4 +26,6 @@ export const fetchTransactionsInputSchema = z.object({
     .describe("Maximum number of transactions to return. Defaults to 50."),
 });
 
-export type FetchTransactionsInput = z.infer<typeof fetchTransactionsInputSchema>;
+export type FetchTransactionsInput = z.infer<
+  typeof fetchTransactionsInputSchema
+>;

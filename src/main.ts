@@ -89,8 +89,6 @@ async function main() {
               contractAddress: string;
               userAddress: string;
             };
-          
-          
 
             const validatedInput = getTokenBalanceInputSchema.parse({
               contractAddress,

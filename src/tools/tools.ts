@@ -68,7 +68,8 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
 
 export const FETCH_TRANSACTIONS_TOOL: Tool = {
   name: "fetch_transactions",
-  description: "Fetch recent transactions involving a user address by scanning recent blocks",
+  description:
+    "Fetch recent transactions involving a user address by scanning recent blocks",
   inputSchema: {
     type: "object",
     properties: fetchTransactionsInputSchema.shape,
