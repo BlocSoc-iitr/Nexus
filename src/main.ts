@@ -13,6 +13,10 @@ import {
   GET_TRANSACTION_RECEIPT_TOOL,
   GET_TOKEN_BALANCE_TOOL,
   FETCH_TRANSACTIONS_TOOL,
+  STAKE_TOOL,
+  UNSTAKE_TOOL,
+  GET_LOGS_TOOL,
+  GET_HISTORICAL_ORDERS_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
@@ -26,6 +30,17 @@ import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/sc
 import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
 import { fetchTransactions } from "./tools/hyper-evm/fetchTransactions/index.js";
 import type { FetchTransactionsInput } from "./tools/hyper-evm/fetchTransactions/schemas.js";
+import {
+  performStaking,
+  performUnstaking,
+} from "./tools/hyper-evm/handleStake/index.js";
+import {
+  getStakingInputSchema,
+  getUnstakingInputSchema,
+} from "./tools/hyper-evm/handleStake/schemas.js";
+import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
+import { getHistoricalOrders } from "./tools/hypercore/getHistoricalOrders/index.js";
+
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -99,15 +114,55 @@ async function main() {
             return result;
           }
 
+
           case "fetch_transactions": {
             const input = args as FetchTransactionsInput;
             const result = await fetchTransactions(input);
+
+          case "stake": {
+            const input = args as {
+              amountToStake: string;
+              validatorAddress: string;
+              isTestnet: boolean | string;
+            };
+
+            const validatedInput = getStakingInputSchema.parse(input);
+            const result = await performStaking(validatedInput);
+            return result;
+          }
+
+          case "unstake": {
+            const input = args as {
+              amountToUnstake: string;
+              validatorAddress: string;
+              isTestnet: boolean | string;
+            };
+
+            const validatedInput = getUnstakingInputSchema.parse(input);
+            const result = await performUnstaking(validatedInput);
+            return result;
+          }
+
+          case "get_logs": {
+            const { contractAddress, from, to } = args as {
+              contractAddress: string;
+              from?: number;
+              to?: number;
+            };
+            const logs = await getLogs({ contractAddress, from, to });
+            return logs;
+          }
+
+          case "get_historical_orders": {
+            const userAddress = (args as { userAddress: `0x${string}` })
+              .userAddress;
+            const result = await getHistoricalOrders({ userAddress });
             return result;
           }
 
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance, stake, unstake`
             );
           }
         }
@@ -135,7 +190,13 @@ async function main() {
         SEND_FUNDS_TOOL,
         GET_TRANSACTION_RECEIPT_TOOL,
         GET_TOKEN_BALANCE_TOOL,
+
         FETCH_TRANSACTIONS_TOOL,
+
+        STAKE_TOOL,
+        UNSTAKE_TOOL,
+        GET_LOGS_TOOL,
+        GET_HISTORICAL_ORDERS_TOOL,
       ],
     };
   });

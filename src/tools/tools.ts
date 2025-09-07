@@ -5,6 +5,12 @@ import { sendFundsInputSchema } from "./hyper-evm/sendFunds/schemas.js";
 import { getTransactionReceiptInputSchema } from "./hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./hyper-evm/getTokenBalance/schemas.js";
 import { fetchTransactionsInputSchema } from "./hyper-evm/fetchTransactions/schemas.js";
+import {
+  getStakingInputSchema,
+  getUnstakingInputSchema,
+} from "./hyper-evm/handleStake/schemas.js";
+import { getLogsInputSchema } from "./hyper-evm/getLogs/schemas.js";
+import { getOrdersInputSchema } from "./hypercore/getHistoricalOrders/schemas.js";
 
 export const GET_BALANCE_TOOL: Tool = {
   name: "get_balance",
@@ -66,6 +72,7 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
   },
 };
 
+
 export const FETCH_TRANSACTIONS_TOOL: Tool = {
   name: "fetch_transactions",
   description:
@@ -73,6 +80,45 @@ export const FETCH_TRANSACTIONS_TOOL: Tool = {
   inputSchema: {
     type: "object",
     properties: fetchTransactionsInputSchema.shape,
+
+export const STAKE_TOOL: Tool = {
+  name: "stake",
+  description: "Stake HYPE tokens on Hyperliquid",
+  inputSchema: {
+    type: "object",
+    properties: getStakingInputSchema.shape,
+    required: ["amountToStake", "validatorAddress", "isTestnet"],
+  },
+};
+
+export const UNSTAKE_TOOL: Tool = {
+  name: "unstake",
+  description: "Unstake HYPE tokens from Hyperliquid",
+  inputSchema: {
+    type: "object",
+    properties: getUnstakingInputSchema.shape,
+    required: ["amountToUnstake", "validatorAddress", "isTestnet"],
+  },
+};
+
+export const GET_LOGS_TOOL: Tool = {
+  name: "get_logs",
+  description:
+    "Get the logs of any ERC20 token(present on hyperliquid) between two blocks",
+  inputSchema: {
+    type: "object",
+    properties: getLogsInputSchema.shape,
+    requires: [],
+  },
+};
+
+export const GET_HISTORICAL_ORDERS_TOOL: Tool = {
+  name: "get_historical_orders",
+  description:
+    "Get the historical orders of a user address present on hyperliquid",
+  inputSchema: {
+    type: "object",
+    properties: getOrdersInputSchema.shape,
     required: ["userAddress"],
   },
 };

@@ -8,6 +8,7 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import dotenv from "dotenv";
 import { privateKeySchema } from "./tools/hyper-evm/sendFunds/schemas.js";
+import * as hyper from "@nktkas/hyperliquid";
 
 dotenv.config();
 
@@ -52,3 +53,17 @@ export const walletClient: WalletClient = createWalletClient({
   chain: hyperEvmConfig,
   transport: http(),
 });
+
+export const transport = new hyper.HttpTransport({
+  isTestnet: true,
+  timeout: 30000,
+});
+
+export const exchClient = new hyper.ExchangeClient({
+  wallet: walletClient,
+  transport: transport,
+  isTestnet: true,
+  signatureChainId: process.env.isTestnet ? "0x66eee" : "0x1",
+});
+
+export const infoClient = new hyper.InfoClient({ transport });
