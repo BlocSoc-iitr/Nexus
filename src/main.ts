@@ -12,6 +12,7 @@ import {
   SEND_FUNDS_TOOL,
   GET_TRANSACTION_RECEIPT_TOOL,
   GET_TOKEN_BALANCE_TOOL,
+  FETCH_TRANSACTIONS_TOOL,
 } from "./tools/tools.js";
 import { getBalance } from "./tools/hyper-evm/getBalance/index.js";
 import { getLatestBlock } from "./tools/hyper-evm/getBlockNumber/index.js";
@@ -23,6 +24,8 @@ import { getTransactionReceipt } from "./tools/hyper-evm/getTransactionReceipt/i
 import type { getTransactionReceiptInput } from "./tools/hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./tools/hyper-evm/getTokenBalance/schemas.js";
 import { getTokenBalance } from "./tools/hyper-evm/getTokenBalance/index.js";
+import { fetchTransactions } from "./tools/hyper-evm/fetchTransactions/index.js";
+import type { FetchTransactionsInput } from "./tools/hyper-evm/fetchTransactions/schemas.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -86,6 +89,8 @@ async function main() {
               contractAddress: string;
               userAddress: string;
             };
+          
+          
 
             const validatedInput = getTokenBalanceInputSchema.parse({
               contractAddress,
@@ -93,6 +98,12 @@ async function main() {
             });
 
             const result = await getTokenBalance(validatedInput);
+            return result;
+          }
+
+          case "fetch_transactions": {
+            const input = args as FetchTransactionsInput;
+            const result = await fetchTransactions(input);
             return result;
           }
 
@@ -126,6 +137,7 @@ async function main() {
         SEND_FUNDS_TOOL,
         GET_TRANSACTION_RECEIPT_TOOL,
         GET_TOKEN_BALANCE_TOOL,
+        FETCH_TRANSACTIONS_TOOL,
       ],
     };
   });

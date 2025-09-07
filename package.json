@@ -26,8 +26,9 @@
     "dotenv": "^17.2.1",
     "ether": "^0.0.9",
     "ethers": "^6.15.0",
+    "hyperliquid": "^1.7.6",
     "viem": "^2.33.3",
-    "zod": "^3.25.76"
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

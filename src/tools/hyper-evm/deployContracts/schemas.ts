@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const abiSchema = z.union([z.array(z.any()), z.record(z.any())]);
+const abiSchema = z.union([z.array(z.any()), z.record(z.string(), z.any())]);
 
 export const deployContractsSchema = z.object({
   abi: abiSchema.describe(

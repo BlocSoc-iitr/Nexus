@@ -4,6 +4,7 @@ import { deployContractsSchema } from "./hyper-evm/deployContracts/schemas.js";
 import { sendFundsInputSchema } from "./hyper-evm/sendFunds/schemas.js";
 import { getTransactionReceiptInputSchema } from "./hyper-evm/getTransactionReceipt/schemas.js";
 import { getTokenBalanceInputSchema } from "./hyper-evm/getTokenBalance/schemas.js";
+import { fetchTransactionsInputSchema } from "./hyper-evm/fetchTransactions/schemas.js";
 
 export const GET_BALANCE_TOOL: Tool = {
   name: "get_balance",
@@ -62,5 +63,15 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
     type: "object",
     properties: getTokenBalanceInputSchema.shape,
     required: ["contractAddress", "userAddress"],
+  },
+};
+
+export const FETCH_TRANSACTIONS_TOOL: Tool = {
+  name: "fetch_transactions",
+  description: "Fetch recent transactions involving a user address by scanning recent blocks",
+  inputSchema: {
+    type: "object",
+    properties: fetchTransactionsInputSchema.shape,
+    required: ["userAddress"],
   },
 };
