@@ -30,18 +30,15 @@ export const hyperEvmConfig = defineChain({
     default: {
       name: "HyperEVM Explorer",
       url: process.env.BLOCK_EXPLORER_URL || "https://testnet.purrsec.com/",
-
     },
   },
   testnet: true,
 });
 
-
 export const publicClient = createPublicClient({
   chain: hyperEvmConfig,
   transport: http(),
 });
-
 
 if (!process.env.PRIVATE_KEY) {
   throw new Error("PRIVATE_KEY environment variable is required");
@@ -56,7 +53,6 @@ export const walletClient: WalletClient = createWalletClient({
   transport: http(),
 });
 
-
 export const transport = new hyper.HttpTransport({
   isTestnet: true,
   timeout: 30000,
@@ -70,4 +66,3 @@ export const exchClient = new hyper.ExchangeClient({
 });
 
 export const infoClient = new hyper.InfoClient({ transport });
-

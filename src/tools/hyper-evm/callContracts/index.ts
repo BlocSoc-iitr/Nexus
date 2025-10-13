@@ -1,27 +1,32 @@
-import { encodeFunctionData, type Abi, type AbiFunction, isAddress } from "viem"
+import {
+  encodeFunctionData,
+  type Abi,
+  type AbiFunction,
+  isAddress,
+} from "viem";
 import { createWalletClient, http } from "viem";
-import { publicClient ,walletClient } from "../../../config.js"
+import { publicClient, walletClient } from "../../../config.js";
 import { hyperEvmConfig } from "../../../config.js";
-import type { GetContractDetails  } from "./schema.js"
+import type { GetContractDetails } from "./schema.js";
 import { privateKeySchema } from "../sendFunds/schemas.js";
-import { privateKeyToAccount } from "viem/accounts"
+import { privateKeyToAccount } from "viem/accounts";
 
 export async function callContracts(contractDetails: GetContractDetails) {
   try {
-    let address = contractDetails.contractAddress
+    let address = contractDetails.contractAddress;
     if (!isAddress(address)) {
-      throw new Error(`Invalid HyperEVM address: ${address}`)
+      throw new Error(`Invalid HyperEVM address: ${address}`);
     }
-    
-    let abi: Abi
+
+    let abi: Abi;
     if (typeof contractDetails.abi === "string") {
       try {
-        abi = JSON.parse(contractDetails.abi) as Abi
+        abi = JSON.parse(contractDetails.abi) as Abi;
       } catch (error) {
-        throw new Error(`Invalid ABI string: ${error}`)
+        throw new Error(`Invalid ABI string: ${error}`);
       }
     } else {
-      abi = contractDetails.abi as Abi
+      abi = contractDetails.abi as Abi;
     }
 
     const functionAbi = abi.find(
@@ -30,15 +35,17 @@ export async function callContracts(contractDetails: GetContractDetails) {
         item.type === "function" &&
         "name" in item &&
         item.name === contractDetails.functionName
-    )
+    );
 
     if (!functionAbi) {
-      throw new Error(`Function ${contractDetails.functionName} not found in ABI`)
+      throw new Error(
+        `Function ${contractDetails.functionName} not found in ABI`
+      );
     }
 
     if (
-      functionAbi.stateMutability === 'view' ||
-      functionAbi.stateMutability === 'pure'
+      functionAbi.stateMutability === "view" ||
+      functionAbi.stateMutability === "pure"
     ) {
       const callParams: any = {
         address: contractDetails.contractAddress,
@@ -47,10 +54,13 @@ export async function callContracts(contractDetails: GetContractDetails) {
       };
 
       if (functionAbi.inputs && functionAbi.inputs.length > 0) {
-        if (!contractDetails.functionArgs || contractDetails.functionArgs.length !== functionAbi.inputs.length) {
+        if (
+          !contractDetails.functionArgs ||
+          contractDetails.functionArgs.length !== functionAbi.inputs.length
+        ) {
           throw Error(
             `Function ${contractDetails.functionName} expects ${functionAbi.inputs.length} arguments, ` +
-            `${contractDetails.functionArgs?.length || 0} provided`
+              `${contractDetails.functionArgs?.length || 0} provided`
           );
         }
         callParams.args = contractDetails.functionArgs;
@@ -66,19 +76,23 @@ export async function callContracts(contractDetails: GetContractDetails) {
     };
 
     if (functionAbi.inputs && functionAbi.inputs.length > 0) {
-      if (!contractDetails.functionArgs || contractDetails.functionArgs.length !== functionAbi.inputs.length) {
+      if (
+        !contractDetails.functionArgs ||
+        contractDetails.functionArgs.length !== functionAbi.inputs.length
+      ) {
         throw Error(
           `Function ${contractDetails.functionName} expects ${functionAbi.inputs.length} arguments, ` +
-          `${contractDetails.functionArgs?.length || 0} provided`
+            `${contractDetails.functionArgs?.length || 0} provided`
         );
       }
       callParams.args = contractDetails.functionArgs;
     }
 
     return await walletClient.writeContract(callParams);
-    
-  } catch(error) {
-    console.log(error)
-    throw Error(`Failed to call contract function: ${error instanceof Error ? error.message : String(error)}`)
+  } catch (error) {
+    console.log(error);
+    throw Error(
+      `Failed to call contract function: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
