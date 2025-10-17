@@ -12,7 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,js,json}\" \"*.{json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js,json}\" \"*.{json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "if exist build rmdir /s /q build",
+    "clean": "rm -rf build",
     "prebuild": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
