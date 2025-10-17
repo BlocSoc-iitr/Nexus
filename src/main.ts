@@ -43,6 +43,7 @@ import {
 import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
 import { getHistoricalOrders } from "./tools/hypercore/getHistoricalOrders/index.js";
 import { getStakedtokens } from "./tools/hypercore/trackstakedtokens/index.js";
+import { StakedInputSchema } from "./tools/hypercore/trackstakedtokens/schema.js";
 
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
@@ -207,9 +208,12 @@ async function main() {
           }
 
           case "track_staked_tokens": {
-            const userAddress = (args as { userAddress: `0x${string}` })
-              .userAddress;
-            const result = await getStakedtokens({ userAddress });
+            const input = args as {
+              userAddress: string;
+              isTestnet: boolean | string;
+            };
+            const validatedInput = StakedInputSchema.parse(input);
+            const result = await getStakedtokens(validatedInput);
             return result;
           }
 

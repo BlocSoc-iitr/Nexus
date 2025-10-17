@@ -132,6 +132,6 @@ export const TRACK_STAKED_TOKENS: Tool = {
   inputSchema: {
     type: "object",
     properties: StakedInputSchema.shape,
-    required: ["userAddress"],
+    required: ["userAddress", "isTestnet"],
   },
 };
