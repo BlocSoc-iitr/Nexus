@@ -13,7 +13,7 @@ import { privateKeyToAccount } from "viem/accounts";
 
 export async function callContracts(contractDetails: GetContractDetails) {
   try {
-    let address = contractDetails.contractAddress;
+    const address = contractDetails.contractAddress;
     if (!isAddress(address)) {
       throw new Error(`Invalid HyperEVM address: ${address}`);
     }

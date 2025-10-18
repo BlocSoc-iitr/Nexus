@@ -128,7 +128,7 @@ export const GET_HISTORICAL_ORDERS_TOOL: Tool = {
 export const TRACK_STAKED_TOKENS: Tool = {
   name: "track_staked_tokens",
   description:
-    "Get the rewards and summary  of a user address present on hyperliquid",
+    "Get the rewards and summary of a user address present on hyperliquid",
   inputSchema: {
     type: "object",
     properties: StakedInputSchema.shape,

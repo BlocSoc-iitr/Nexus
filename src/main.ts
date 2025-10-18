@@ -219,7 +219,7 @@ async function main() {
 
           default: {
             throw new Error(
-              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance, stake, unstake,get_logs,call_contract_function,track_staked_tokens`
+              `Tool '${name}' not found. Available tools: get_latest_block, get_balance, deploy_contracts, send_funds, get_transaction_receipt, get_token_balance, stake, unstake, get_logs, call_contract_function, track_staked_tokens`
             );
           }
         }
