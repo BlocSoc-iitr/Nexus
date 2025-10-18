@@ -41,7 +41,6 @@ import {
 import { getLogs } from "./tools/hyper-evm/getLogs/index.js";
 import { getHistoricalOrders } from "./tools/hypercore/getHistoricalOrders/index.js";
 
-
 async function main() {
   console.error("Starting Hyperliquid MCP server...");
   const server = new Server(
@@ -114,10 +113,11 @@ async function main() {
             return result;
           }
 
-
           case "fetch_transactions": {
             const input = args as FetchTransactionsInput;
             const result = await fetchTransactions(input);
+            return result;
+          }
 
           case "stake": {
             const input = args as {

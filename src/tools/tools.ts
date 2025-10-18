@@ -72,7 +72,6 @@ export const GET_TOKEN_BALANCE_TOOL: Tool = {
   },
 };
 
-
 export const FETCH_TRANSACTIONS_TOOL: Tool = {
   name: "fetch_transactions",
   description:
@@ -80,6 +79,9 @@ export const FETCH_TRANSACTIONS_TOOL: Tool = {
   inputSchema: {
     type: "object",
     properties: fetchTransactionsInputSchema.shape,
+    required: ["userAddress"],
+  },
+};
 
 export const STAKE_TOOL: Tool = {
   name: "stake",
