@@ -1,6 +1,46 @@
 import { Hyperliquid } from "hyperliquid";
 import type { FetchTransactionsInput } from "./schemas.js";
 
+const RETRYABLE_ERROR_PATTERNS = [
+  "422",
+  "deserialize",
+  "ECONNRESET",
+  "ETIMEDOUT",
+  "ENETUNREACH",
+] as const;
+
+interface HistoricalOrder {
+  coin?: string;
+  side?: string;
+  sz?: string;
+  limitPx?: string;
+  timestamp?: number;
+  oid?: string | number;
+  order?: {
+    coin?: string;
+    side?: string;
+    sz?: string;
+    limitPx?: string;
+    timestamp?: number;
+    oid?: string | number;
+  };
+}
+
+function isHistoricalOrder(obj: any): obj is HistoricalOrder {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    (typeof obj.coin === "string" ||
+      (obj.order && typeof obj.order.coin === "string"))
+  );
+}
+
+function isRetryableError(message: string): boolean {
+  return RETRYABLE_ERROR_PATTERNS.some(pattern =>
+    message.toLowerCase().includes(pattern.toLowerCase())
+  );
+}
+
 export async function fetchTransactions(input: FetchTransactionsInput) {
   const { userAddress, lookbackBlocks = 500, limit = 50 } = input;
 
@@ -8,10 +48,8 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
     // Initialize Hyperliquid SDK
     const sdk = new Hyperliquid();
 
-    // Calculate time range based on lookbackBlocks (assuming ~2 second block time)
     const endTimeSec = Math.floor(Date.now() / 1000);
     const startTimeSec = endTimeSec - lookbackBlocks * 2; // 2 seconds per block
-    // Keep seconds for APIs that expect seconds
 
     const results: Array<{
       type: string;
@@ -46,14 +84,12 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
       console.warn("Could not fetch user fills:", error);
     }
 
-    // Fetch user order history with retry and fallback
     try {
       const maxAttempts = 3;
       const baseDelayMs = 300;
       let lastError: unknown = undefined;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-          // API expects second timestamps
           const orderHistory = await sdk.info.getUserOrderHistory(
             userAddress,
             startTimeSec,
@@ -78,10 +114,8 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
           break;
         } catch (err) {
           lastError = err;
-          // If 422 or similar, backoff and retry
           const message = err instanceof Error ? err.message : String(err);
-          const isRetryable =
-            /422|deserialize|ECONNRESET|ETIMEDOUT|ENETUNREACH/i.test(message);
+          const isRetryable = isRetryableError(message);
           if (attempt < maxAttempts && isRetryable) {
             const delay = baseDelayMs * Math.pow(2, attempt - 1);
             await new Promise(r => setTimeout(r, delay));
@@ -95,38 +129,72 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
       }
     } catch (error) {
       console.warn("Could not fetch order history:", error);
-      // Fallback: try getHistoricalOrders (no time bounds)
       try {
-        const hist = await (async () => {
-          try {
-            // getHistoricalOrders returns an array of orders for the address
-            // Types may differ slightly; we will normalize the essential fields used in results
-            // @ts-ignore - SDK typing differences across versions
-            const resp = await sdk.info.getHistoricalOrders(userAddress);
-            return Array.isArray(resp) ? resp : [];
-          } catch (e) {
-            return [] as unknown[];
-          }
-        })();
+        const histRaw = await sdk.info.getHistoricalOrders(userAddress);
+        const hist: HistoricalOrder[] = Array.isArray(histRaw) ? histRaw : [];
+
         for (const order of hist) {
           if (results.length >= limit) break;
+
+          // Use type guard to safely access properties
+          if (!isHistoricalOrder(order)) {
+            continue;
+          }
+
           try {
+            const coin =
+              order.order && typeof order.order.coin === "string"
+                ? order.order.coin
+                : typeof order.coin === "string"
+                  ? order.coin
+                  : "Unknown";
+
+            const sideRaw =
+              order.order && typeof order.order.side === "string"
+                ? order.order.side
+                : typeof order.side === "string"
+                  ? order.side
+                  : undefined;
+            const side = sideRaw === "B" ? "Buy" : "Sell";
+
+            const size =
+              order.order && typeof order.order.sz === "string"
+                ? order.order.sz
+                : typeof order.sz === "string"
+                  ? order.sz
+                  : "Unknown";
+
+            const price =
+              order.order && typeof order.order.limitPx === "string"
+                ? order.order.limitPx
+                : typeof order.limitPx === "string"
+                  ? order.limitPx
+                  : "Unknown";
+
+            const timestamp =
+              order.order && typeof order.order.timestamp === "number"
+                ? order.order.timestamp
+                : typeof order.timestamp === "number"
+                  ? order.timestamp
+                  : 0;
+
+            const oid =
+              order.order &&
+              (typeof order.order.oid === "string" ||
+                typeof order.order.oid === "number")
+                ? order.order.oid
+                : typeof order.oid === "string" || typeof order.oid === "number"
+                  ? order.oid
+                  : undefined;
+
             results.push({
               type: "Order",
-              // @ts-ignore - best-effort normalization
-              coin: order.order?.coin ?? order.coin ?? "Unknown",
-              // @ts-ignore
-              side: (order.order?.side ?? order.side) === "B" ? "Buy" : "Sell",
-              // @ts-ignore
-              size: order.order?.sz ?? order.sz ?? "Unknown",
-              // @ts-ignore
-              price: order.order?.limitPx ?? order.limitPx ?? "Unknown",
-              // @ts-ignore
-              timestamp: order.order?.timestamp ?? order.timestamp ?? 0,
-              // @ts-ignore
-              orderId:
-                // @ts-ignore
-                (order.order?.oid ?? order.oid)?.toString?.() ?? "Unknown",
+              coin,
+              side,
+              size,
+              price,
+              timestamp,
+              orderId: oid !== undefined ? oid.toString() : "Unknown",
             });
           } catch {
             // Skip malformed entries
@@ -137,7 +205,6 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
       }
     }
 
-    // Fetch open orders
     try {
       const openOrders = await sdk.info.getUserOpenOrders(userAddress);
       if (openOrders && Array.isArray(openOrders)) {
@@ -159,7 +226,6 @@ export async function fetchTransactions(input: FetchTransactionsInput) {
       console.warn("Could not fetch open orders:", error);
     }
 
-    // Sort results by timestamp (newest first) and limit to requested amount
     results.sort((a, b) => b.timestamp - a.timestamp);
     const limitedResults = results.slice(0, limit);
 
