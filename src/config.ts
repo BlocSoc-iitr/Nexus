@@ -9,7 +9,6 @@ import { privateKeyToAccount } from "viem/accounts";
 import dotenv from "dotenv";
 import { privateKeySchema } from "./tools/hyper-evm/sendFunds/schemas.js";
 import * as hyper from "@nktkas/hyperliquid";
-
 dotenv.config();
 
 export const hyperEvmConfig = defineChain({
