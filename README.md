@@ -39,16 +39,18 @@ Below is the complete architecture of Nexus
 The server currently exposes the following tools (see `src/tools/tools.ts`):
 
 - get_latest_block: Get the latest block number
-- get_balance: Get native token balance for a user address
-- get_token_balance: Get ERC-20 token balance for a user address
+- get_balance: Get native token balance for an user address
 - send_funds: Send native funds from the configured signer to a receiver
 - deploy_contracts: Deploy a contract with ABI, bytecode, constructor args
 - get_transaction_receipt: Fetch a transaction receipt by hash
 - stake: Stake HYPE tokens on Hyperliquid
 - unstake: Unstake HYPE tokens from Hyperliquid
-- call_function: Call the function of a contract
-- fetch_transactions: Fetch the transactions for a user address
-- fetch_orders: Fetch the historical orders for a user address
+- call_contract_function: Call the function of a contract
+- fetch_transactions: Fetch the transactions for an user address
+- get_token_balance: Fetch the balance of an ERC20 token for an user address
+- get_logs: Fetch the logs of any ERC20 token between two blocks
+- get_historical_orders: Fetch the historical orders for an user address
+- track_staked_tokens: Fetch the rewards and summary of staked tokens for an user address
 
 Each tool validates inputs with `zod` and executes using `viem` on the configured Hyperliquid RPC.
 
@@ -168,7 +170,7 @@ You should see: "Hyperliquid MCP Server running on stdio".
 ```
 src/
   main.ts                 # MCP server bootstrap and handlers
-  client.ts               # viem wallet client configured from env
+  client.ts               # viem wallet client configured from .env
   config.ts               # chain configuration (Hyperliquid EVM)
   tools/                  # tool definitions and implementations
     tools.ts              # Tool metadata + schemas for MCP
@@ -189,4 +191,4 @@ src/
 
 ## Contributing
 
-We openly welcome contributions to Nexus from the broader web3 community. For details, refer -[CONTRIBUTION GUIDELINES](CONTRIBUTING.md).
+We openly welcome contributions to Nexus from the broader web3 community. For details, refer to [CONTRIBUTION GUIDELINES](CONTRIBUTING.md).
